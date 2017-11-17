@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {connect} from 'react-redux';
+import {addGun,removeGun,addAsync} from './index.redux';
 
+@connect((state) => {
+    return {num:state}
+},{addGun,removeGun,addAsync})
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+    render() {
+       const { num,addGun,removeGun,addAsync } = this.props;
+        return (
+            <div>
+                <h1>现在是数字{num}</h1>
+                <button onClick={addGun}>Add</button>
+                <button onClick={removeGun}>Remove</button>
+                <button onClick={addAsync}>AsyncAdd</button>
+            </div>
+        );
+    }
 }
-
 export default App;
