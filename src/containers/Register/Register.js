@@ -1,16 +1,20 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Redirect} from 'react-router-dom';
 import Logo from '../../components/Logo/Logo';
+import {register} from '../../redux/user.redux';
 import {
     List,
     InputItem,
     WhiteSpace,
     WingBlank,
     Radio,
-    Button,
-    Toast
+    Button
 } from 'antd-mobile';
+
 const RadioItem = Radio.RadioItem;
 
+@connect(state => state.user, {register})
 class Register extends Component {
     constructor() {
         super();
@@ -31,28 +35,27 @@ class Register extends Component {
         this.setState({[key]: value})
     }
     handleRegister() {
-        console.log(this.state);
-        const {user,pwd,confirmPwd} = this.state;
-        if(!user.trim()){
-            Toast.show('请输入用户名',1);
-            return;
-        }
-        if(!pwd.trim()){
-            Toast.show('请输入密码',1);
-            return;
-        }
-        if(pwd !== confirmPwd){
-            Toast.show('两次输入的密码不一致',1);
-            return;
-        }
-
+        this
+            .props
+            .register(this.state);
     }
     render() {
         return (
             <div>
+            {this.props.redirectTo ? <Redirect to={this.props.redirectTo}></Redirect> : null}
                 <Logo></Logo>
                 <WingBlank>
                     <List>
+                        {this.props.msg
+                            ? (
+                                <div
+                                    style={{
+                                    textAlign: 'center',
+                                    color: '#f00',
+                                    margin: '10px 0'
+                                }}>{this.props.msg}</div>
+                            )
+                            : null}
                         <InputItem onChange={v => this.handleChnage('user', v)}>用 户</InputItem>
                         <WhiteSpace/>
                         <InputItem type='password' onChange={v => this.handleChnage('pwd', v)}>密 码</InputItem>
