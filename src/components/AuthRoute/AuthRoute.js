@@ -24,7 +24,7 @@ class AuthRoute extends Component {
                     this.props.loadData(res.data.data)
                 } else {
                     //    没有登陆信息
-                    this.props.history.push('/register');
+                    this.props.history.push('/login');
                 }
             }
         })
