@@ -1,8 +1,7 @@
 import Axios from 'axios';
 import {getRedirectPach} from '../util';
 // action
-const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
-const LOGON_SUCCESS = 'LOGON_SUCCESS';
+const AUTH_SUCCESS = 'AUTH_SUCCESS';
 const ERROR_MSG = 'ERROR_MSG';
 const LOAD_DATA = 'LOAD_DATA';
 
@@ -17,19 +16,10 @@ const initState = {
 }
 export function user(state = initState, action) {
     switch (action.type) {
-        case REGISTER_SUCCESS:
+        case AUTH_SUCCESS:
             return {
                 ...state,
                 msg: '',
-                isAuth: true,
-                redirectTo: getRedirectPach(action.payload),
-                ...action.payload
-            }
-        case LOGON_SUCCESS:
-            return {
-                ...state,
-                msg: '',
-                isAuth: true,
                 redirectTo: getRedirectPach(action.payload),
                 ...action.payload
             }
@@ -50,18 +40,15 @@ export function user(state = initState, action) {
 }
 
 // actionCreater
-function registerSuccess(data) {
-    return {payload: data.data, type: REGISTER_SUCCESS}
-}
-function loginSuccess(data) {
-    return {payload: data.data, type: LOGON_SUCCESS}
+function authSuccess(data) {
+    return {payload: data.data, type: AUTH_SUCCESS}
 }
 function errorMsg(msg) {
     return {msg, type: ERROR_MSG}
 }
 
 export function loadData(userinfo) {
-    return {type: LOAD_DATA,payload:userinfo}
+    return {type: LOAD_DATA, payload: userinfo}
 }
 // thunk action
 export function register({user, pwd, confirmPwd, type}) {
@@ -76,9 +63,23 @@ export function register({user, pwd, confirmPwd, type}) {
             .post('/user/register', {user, pwd, type})
             .then(res => {
                 if (res.status === 200 && res.data.code === 0) {
-                    dispatch(registerSuccess(res.data))
+                    dispatch(authSuccess(res.data))
                 } else {
                     dispatch(errorMsg(res.data.msg))
+                }
+            })
+    }
+}
+
+export function update(data) {
+    return dispatch => {
+        Axios
+            .post('/user/update', data)
+            .then(res => {
+                if (res.status === 200 && res.data.code === 0) {
+                    dispatch(authSuccess(res.data));
+                } else {
+                    dispatch(errorMsg(res.data.msg));
                 }
             })
     }
@@ -93,7 +94,7 @@ export function login({user, pwd}) {
             .post('/user/login', {user, pwd})
             .then((res) => {
                 if (res.status === 200 && res.data.code === 0) {
-                    dispatch(loginSuccess(res.data));
+                    dispatch(authSuccess(res.data));
                 } else {
                     dispatch(errorMsg(res.data.msg));
                 }
