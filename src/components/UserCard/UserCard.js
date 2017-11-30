@@ -6,7 +6,6 @@ class UserCard extends Component {
         userlist: PropTypes.array.isRequired
     }
     render() {
-        console.log(this.props.userlist);
         const {userlist} = this.props;
         return (
             <div>

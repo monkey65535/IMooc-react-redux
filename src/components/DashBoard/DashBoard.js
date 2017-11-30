@@ -50,13 +50,12 @@ class DashBoard extends Component {
                 title: '个人中心',
                 component: User
             }
-        ]
+        ];
+        const pageName = navList.find(v=>v.path === pathname);
         return (
             <div>
                 <NavBar className='fixd-header' mode="dark">
-                    {navList
-                        .find(el => el.path === pathname)
-                        .title}
+                {pageName ? pageName.title : null}
                 </NavBar>
                 <div style={{
                     marginTop: '45px'
