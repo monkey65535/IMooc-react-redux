@@ -4,6 +4,7 @@ import {getRedirectPach} from '../util';
 const AUTH_SUCCESS = 'AUTH_SUCCESS';
 const ERROR_MSG = 'ERROR_MSG';
 const LOAD_DATA = 'LOAD_DATA';
+const LOGOUT_SUBMIT = 'LOGOUT_SUBMIT';
 
 // reducer
 const initState = {
@@ -34,6 +35,11 @@ export function user(state = initState, action) {
                 isAuth: false,
                 msg: action.msg
             }
+        case LOGOUT_SUBMIT:
+            return {
+                ...initState,
+                redirectTo: '/login'
+            }
         default:
             return state;
     }
@@ -50,6 +56,11 @@ function errorMsg(msg) {
 export function loadData(userinfo) {
     return {type: LOAD_DATA, payload: userinfo}
 }
+
+export function logoutSubmit() {
+    return {type: LOGOUT_SUBMIT}
+}
+
 // thunk action
 export function register({user, pwd, confirmPwd, type}) {
     if (!user || !pwd || !confirmPwd || !type) {

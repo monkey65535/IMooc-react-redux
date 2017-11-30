@@ -7,11 +7,9 @@ import NavLink from '../NavLink/NavLink';
 // 组件
 import Boss from '../Boss/Boss';
 import Genius from '../Genius/Genius';
+import User from '../User/User';
 const Msg = () => (
     <div>Msg首页</div>
-);
-const User = () => (
-    <div>User首页</div>
 );
 
 @connect(state => state, null)
