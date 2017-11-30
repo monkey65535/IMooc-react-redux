@@ -6,9 +6,7 @@ import NavLink from '../NavLink/NavLink';
 
 // 组件
 import Boss from '../Boss/Boss';
-const GENIUS = () => (
-    <div>GENIUS首页</div>
-);
+import Genius from '../Genius/Genius';
 const Msg = () => (
     <div>Msg首页</div>
 );
@@ -35,7 +33,7 @@ class DashBoard extends Component {
                 text: 'BOSS',
                 icon: 'job',
                 title: 'BOSS列表',
-                component: GENIUS,
+                component: Genius,
                 hide: type === 'BOSS'
             }, {
                 path: '/msg',

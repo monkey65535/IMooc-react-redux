@@ -13,9 +13,11 @@ class UserCard extends Component {
                     el.avatar ? (<div className="card-Item" key={el._id}>
                     <Card>
                         <Card.Header title={el.user} thumb={require(`../img/${el.avatar}.png`)} extra={<span>{el.title}</span>}></Card.Header>
-                        <Card.Body>{
-                            el.desc.split('\n').map(e=>(<div key={e}>{e}</div>))
-                        }</Card.Body>
+                        <Card.Body>
+                            {el.type === 'boss' ? <div>公司：{el.company}</div> : null}
+                            {el.desc.split('\n').map(e=>(<div key={e}>{e}</div>))}
+                            {el.type === 'boss' ? <div>薪资：{el.money}</div> : null}
+                        </Card.Body>
                     </Card>
                     <WhiteSpace></WhiteSpace>
                 </div>) : null
