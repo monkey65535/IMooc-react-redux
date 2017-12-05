@@ -3,7 +3,7 @@ import {NavBar} from 'antd-mobile'
 import {connect} from 'react-redux';
 import {Route, Switch} from 'react-router-dom';
 import NavLink from '../NavLink/NavLink';
-
+import {getMsgList,recvMsg} from '../../redux/chat.redux';
 // 组件
 import Boss from '../Boss/Boss';
 import Genius from '../Genius/Genius';
@@ -12,9 +12,12 @@ const Msg = () => (
     <div>Msg首页</div>
 );
 
-@connect(state => state, null)
+@connect(state => state, {getMsgList,recvMsg})
 class DashBoard extends Component {
-
+    componentDidMount() {
+        this.props.getMsgList();
+        this.props.recvMsg();
+    }
     render() {
         const {pathname} = this.props.location;
         const {type} = this.props.user;
@@ -47,17 +50,23 @@ class DashBoard extends Component {
                 component: User
             }
         ];
-        const pageName = navList.find(v=>v.path === pathname);
+        const pageName = navList.find(v => v.path === pathname);
         return (
             <div>
                 <NavBar className='fixd-header' mode="dark">
-                {pageName ? pageName.title : null}
+                    {pageName
+                        ? pageName.title
+                        : null}
                 </NavBar>
-                <div style={{
-                    marginTop: '45px'
+                <div
+                    style={{
+                    marginTop: '45px',
+                    marginBottom: '50px'
                 }}>
                     <Switch>
-                        {navList.map(key=>(<Route key={key.title} path={key.path} component={key.component}></Route>))}
+                        {navList.map(key => (
+                            <Route key={key.title} path={key.path} component={key.component}></Route>
+                        ))}
                     </Switch>
                 </div>
                 <NavLink navList={navList}></NavLink>

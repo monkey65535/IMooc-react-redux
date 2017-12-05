@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {TabBar} from 'antd-mobile';
 import {withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
 @withRouter
+@connect(state => state.chat, null)
 class NavLink extends Component {
     static propTypes = {
         navList: PropTypes.array.isRequired
@@ -18,6 +20,11 @@ class NavLink extends Component {
                 }
                 title = {
                     el.text
+                }
+                badge = {
+                    el.path === '/msg'
+                        ? this.props.unRead
+                        : 0
                 }
                 icon = {
                     require(`./img/${el.icon}.png`)

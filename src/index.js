@@ -18,8 +18,11 @@ import Register from './containers/Register/Register';
 import BossInfo from './containers/BossInfo/Bossinfo';
 import GeniusInfo from './containers/GeniusInfo/GeniusInfo';
 
-// 
+// 列表，详情，个人中心
 import DashBoard from './components/DashBoard/DashBoard';
+
+// 聊天页面
+import Chat from './components/Chat/Chat';
 
 import './index.css';
 
@@ -39,6 +42,7 @@ ReactDom.render(
                 <Route path='/register' component={Register}></Route>
                 <Route path='/bossinfo' component={BossInfo}></Route>
                 <Route path='/geniusInfo' component={GeniusInfo}></Route>
+                <Route path='/chat/:userId' component={Chat}></Route>
                 <Route component={DashBoard}></Route>
             </Switch>
         </div>
