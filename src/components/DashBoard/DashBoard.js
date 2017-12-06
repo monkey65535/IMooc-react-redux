@@ -8,9 +8,7 @@ import {getMsgList,recvMsg} from '../../redux/chat.redux';
 import Boss from '../Boss/Boss';
 import Genius from '../Genius/Genius';
 import User from '../User/User';
-const Msg = () => (
-    <div>Msg首页</div>
-);
+import Msg from '../Message/Message'
 
 @connect(state => state, {getMsgList,recvMsg})
 class DashBoard extends Component {
