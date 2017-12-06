@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {List, InputItem, NavBar,Icon} from 'antd-mobile';
+import {List, InputItem, NavBar,Icon,Grid} from 'antd-mobile';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {sendMsg,getMsgList,recvMsg} from '../../redux/chat.redux';
@@ -12,17 +12,22 @@ class Chat extends Component {
         super();
         this.state = {
             text: '',
-            msg: []
+            msg: [],
+            showEmoji:false
         }
         this.handleSubmit = this
             .handleSubmit
             .bind(this);
+        this.handleShowEmoji = this.handleShowEmoji.bind(this);
     }
     componentDidMount() {
         if(!this.props.chat.chatmsg.length){
             this.props.getMsgList();
             this.props.recvMsg();
         }
+        setTimeout(()=>{
+            window.dispatchEvent(new Event('resize'))
+        },0)
     }
     handleSubmit() {
         const from = this.props.user._id;
@@ -33,11 +38,21 @@ class Chat extends Component {
             .sendMsg({from, to, msg});
         this.setState({text: ''})
     }
+    handleShowEmoji(ev){
+        ev.stopPropagation();
+        this.setState({showEmoji:!this.state.showEmoji});
+        setTimeout(()=>{
+            window.dispatchEvent(new Event('resize'))
+        },0)
+    }
     render() {
         const {userId} = this.props.match.params;
         const Item = List.Item;
         const {users} = this.props.chat;
-        const chatMsg = this.props.chat.chatmsg.filter(el=>el.chatid === getChatId(userId,this.props.user._id))
+        const chatMsg = this.props.chat.chatmsg.filter(el=>el.chatid === getChatId(userId,this.props.user._id));
+
+        //emoji表情列表
+        const emoji = '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😌 😍 😘 😗 😙 😚 😋 😜 😝 😛 🤑 🤗 🤓 😎 😏 😒 😞 😔 😟 😕 🙁 😣 😖 😫 😩 😤 😠 😡 😶 😐 😑 😯 😦 😧 😮 😲 😵 😳 😱 😨 😰 😢 😥 😭 😓 😪 😴 🙄 🤔 😬 🤐 😷 🤒 🤕 😈 👿 👹 👺 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 👐 🙌 👏 🙏 👍 👎 👊 ✊ 🤘 👌 👈 👉 👆 👇 ✋  🖐 🖖 👋  💪 🖕 ✍️  💅 🖖 💄 💋 👄 👅 👂 👃 👁 👀 '.split(' ').filter(el => el).map(e=>({text:e}));
         if(!users[userId]) return null;
         return (
             <div id="chat-page">
@@ -82,10 +97,21 @@ class Chat extends Component {
                         <InputItem
                             placeholder='请输入'
                             value={this.state.text}
-                            extra={<span onClick={this.handleSubmit}>发送</span>}
+                            extra={<span> <span style={{marginRight:'10px'}} onClick={this.handleShowEmoji}>😀</span>   <span onClick={this.handleSubmit}>发送</span></span>}
                             onChange={v => this.setState({text: v})}>
                         </InputItem>
                     </List>
+                    {this.state.showEmoji ? (<Grid 
+                        data={emoji} 
+                        columnNum={9}
+                        isCarousel={true}
+                        onClick={(e)=>{
+                            console.log(e);
+                            this.setState({text:`${this.state.text}${e.text}`})
+                        }}
+                    >
+                    </Grid>) : null}
+                    
                 </div>
             </div>
         );
