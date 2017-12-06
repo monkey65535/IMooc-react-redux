@@ -13,7 +13,7 @@ const MSG_READ = 'MSG_READ';
 
 const initState = {
     chatmsg: [],
-    users:{},
+    users: {},
     unRead: 0
 };
 // reducer
@@ -23,18 +23,31 @@ export function chat(state = initState, action) {
             return {
                 ...state,
                 chatmsg: [...action.payload.msg],
-                unRead:action.payload.msg.filter(v =>!v.read).length,
-                users:{...action.payload.users}
+                unRead: action
+                    .payload
+                    .msg
+                    .filter(v => !v.read && v.to === action.payload.userid)
+                    .length,
+                users: {
+                    ...action.payload.users
+                }
             };
         case MSG_REVC:
+            const unReadNum = action.payload.to === action.userid
+                ? 1
+                : 0;
+            console.log(unReadNum);
             return {
                 ...state,
-                chatmsg: [...state.chatmsg,action.payload],
-                unRead:state.unRead + 1
+                chatmsg: [
+                    ...state.chatmsg,
+                    action.payload
+                ],
+                unRead: state.unRead + unReadNum
             };
         case MSG_READ:
             return {
-                ...state,
+                ...state
             };
         default:
             return state;
@@ -42,15 +55,22 @@ export function chat(state = initState, action) {
 }
 
 // create action 获取信息列表
-const msgList = ({msg,users}) => ({type: MSG_LIST, payload:{msg,users}})
+const msgList = ({msg, users, userid}) => ({
+    type: MSG_LIST,
+    payload: {
+        msg,
+        users,
+        userid
+    }
+})
 export function getMsgList() {
-    return dispatch => {
+    return (dispatch, getState) => {
         Axios
             .get('/user/getmsglist')
             .then(res => {
                 if (res.status === 200 && res.data.code === 0) {
-                    console.log(res);
-                    dispatch(msgList({msg:res.data.msgs,users:res.data.users}));
+                    const userid = getState().user._id;
+                    dispatch(msgList({userid, msg: res.data.msgs, users: res.data.users}));
                 }
             })
     }
@@ -64,13 +84,13 @@ export function sendMsg({from, to, msg}) {
 }
 
 // 接受信息
-const msgRecv = data => ({type: MSG_REVC, payload: data})
+const msgRecv = (data, userid) => ({type: MSG_REVC, payload: data, userid: userid})
 export function recvMsg() {
-    return dispatch => {
+    return (dispatch, getState) => {
         socket
             .on('recvmsg', function (data) {
-                console.log('recvmsg', data);
-                dispatch(msgRecv(data));
+                const userid = getState().user._id;
+                dispatch(msgRecv(data, userid));
             })
     }
 }

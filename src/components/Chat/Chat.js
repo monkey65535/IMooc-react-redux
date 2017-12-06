@@ -3,6 +3,7 @@ import {List, InputItem, NavBar,Icon} from 'antd-mobile';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {sendMsg,getMsgList,recvMsg} from '../../redux/chat.redux';
+import {getChatId} from '../../util';
 
 @withRouter
 @connect(state => state, {getMsgList,sendMsg,recvMsg})
@@ -18,7 +19,7 @@ class Chat extends Component {
             .bind(this);
     }
     componentDidMount() {
-        if(this.props.chat.chatmsg.length <= 0){
+        if(!this.props.chat.chatmsg.length){
             this.props.getMsgList();
             this.props.recvMsg();
         }
@@ -36,6 +37,7 @@ class Chat extends Component {
         const {userId} = this.props.match.params;
         const Item = List.Item;
         const {users} = this.props.chat;
+        const chatMsg = this.props.chat.chatmsg.filter(el=>el.chatid === getChatId(userId,this.props.user._id))
         if(!users[userId]) return null;
         return (
             <div id="chat-page">
@@ -48,31 +50,31 @@ class Chat extends Component {
                     {users[userId].name}
                 </NavBar>
                 <div className="chat-content" style={{margin:'50px 0'}}>
-                {this
-                    .props
-                    .chat
-                    .chatmsg
-                    .map((el, i) => {
+                {chatMsg.map((el, i) => {
                         const avatar = require(`../img/${users[el.from].avatar}.png`);
-                        return userId === el.from ? (
-                            <List key={i}>
-                            <Item
-                            thumb={<img src={avatar} alt='用户头像'/>} 
-                            >
-                                {`${el.content}`}
-                            </Item>
-                            </List>
-                        ) : (
-                            <List key={i}>
-                                <Item 
-                                    className='chat-me'
-                                    extra={<img src={avatar} alt='用户头像'/>}
+                        if(el.content){
+                            return userId === el.from ? (
+                                <List key={i}>
+                                <Item
+                                thumb={<img src={avatar} alt='用户头像'/>} 
                                 >
                                     {`${el.content}`}
                                 </Item>
-                            </List>
-                           
-                        );
+                                </List>
+                            ) : (
+                                <List key={i}>
+                                    <Item 
+                                        className='chat-me'
+                                        extra={<img src={avatar} alt='用户头像'/>}
+                                    >
+                                        {`${el.content}`}
+                                    </Item>
+                                </List>
+                               
+                            );
+                        }else{
+                            return null;
+                        }
                     })}
                     </div>
                 <div className="stick-footer fixed-bottom-bar">
