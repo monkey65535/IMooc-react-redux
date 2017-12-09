@@ -36,7 +36,6 @@ export function chat(state = initState, action) {
             const unReadNum = action.payload.to === action.userid
                 ? 1
                 : 0;
-            console.log(unReadNum);
             return {
                 ...state,
                 chatmsg: [
@@ -46,8 +45,18 @@ export function chat(state = initState, action) {
                 unRead: state.unRead + unReadNum
             };
         case MSG_READ:
+        const {from,num} = action.payload;
             return {
-                ...state
+                ...state,
+                unRead: state.unRead - num,
+                chatmsg: [
+                    ...state.chatmsg.map(v=>{
+                        if(from === v.from){
+                            v.read = true;
+                        }
+                        return v;
+                    })
+                ],
             };
         default:
             return state;
@@ -91,6 +100,22 @@ export function recvMsg() {
             .on('recvmsg', function (data) {
                 const userid = getState().user._id;
                 dispatch(msgRecv(data, userid));
+            })
+    }
+}
+
+// 更新已读
+const msgRead = ({userid, form, num}) => ({type: MSG_READ});
+export function readMsg(from) {
+    return (dispatch, getState) => {
+        Axios
+            .post(`/user/readmsg`, {from})
+            .then(res => {
+                const userid = getState().user._id;
+                if (res.state === 200 && res.data.code === 0) {
+                    const num = res.data;
+                    dispatch(msgRead({userid, from, num}))
+                }
             })
     }
 }

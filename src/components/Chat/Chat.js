@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import {List, InputItem, NavBar,Icon,Grid} from 'antd-mobile';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {sendMsg,getMsgList,recvMsg} from '../../redux/chat.redux';
+import {sendMsg,getMsgList,recvMsg,readMsg} from '../../redux/chat.redux';
 import {getChatId} from '../../util';
 
 @withRouter
-@connect(state => state, {getMsgList,sendMsg,recvMsg})
+@connect(state => state, {getMsgList,sendMsg,recvMsg,readMsg})
 class Chat extends Component {
     constructor() {
         super();
@@ -28,6 +28,9 @@ class Chat extends Component {
         setTimeout(()=>{
             window.dispatchEvent(new Event('resize'))
         },0)
+    }
+    componentWillUnmount(){
+        this.props.readMsg(this.props.match.params.userId)
     }
     handleSubmit() {
         const from = this.props.user._id;
